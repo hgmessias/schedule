@@ -4,9 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Henrique Guerra Messias">
-    <title>Document</title>
+    <title>Schedule</title>
+    </head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #contato-list {
+            margin-bottom: 20px;
+        }
+        .contato {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .contato p {
+            margin: 0;
+        }
+        #mensagem {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    
+    <h1>Agenda de Contatos</h1>
+    <div id="mensagem"></div>
+    <div id="contato-list"></div>
+    <form id="contato-form">
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome" required><br>
+        <label for="numero">Telefone:</label><br>
+        <input type="text" id="numero" name="numero" required><br>
+        <label for="email">E-mail:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+        <button type="submit">Adicionar Contato</button>
+    </form>
+
+    <script>
+        // Função para adicionar um novo contato
+        function adicionarContato(nome, numero, email) {
+            const dataHoraCadastro = new Date().toLocaleString(); // Data e hora atual formatada
+            const contato = {
+                nome: nome,
+                numero: numero,
+                email: email,
+                dataHoraCadastro: dataHoraCadastro
+            };
+            return contato;
+        }
+
+        // Função para limpar o formulário
+        function limparFormulario() {
+            document.getElementById("contato-form").reset();
+        }
+
+        // Função para exibir os contatos na lista
+        function exibirContatos(contatos) {
+            const contatoList = document.getElementById("contato-list");
+            contatoList.innerHTML = ""; // Limpa a lista antes de exibir os contatos
+
+            contatos.forEach((contato, index) => {
+                const contatoDiv = document.createElement("div");
+                contatoDiv.classList.add("contato");
+                contatoDiv.innerHTML = `
+                    <p><strong>Contato ${index + 1}</strong></p>
+                    <p><strong>Nome:</strong> ${contato.nome}</p>
+                    <p><strong>Número:</strong> ${contato.numero}</p>
+                    <p><strong>Email:</strong> ${contato.email}</p>
+                    <p><strong>Data e Hora de Cadastro:</strong> ${contato.dataHoraCadastro}</p>
+                    <button onclick="editarContato(${index})">Editar</button>
+                    <button onclick="excluirContato(${index})">Excluir</button>
+                `;
+                contatoList.appendChild(contatoDiv);
+            });
+        }
+
+        // Array para armazenar os contatos
+        let contatos = [];
+
+        // Função principal para adicionar um contato ao formulário
+        document.getElementById("contato-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Evita o comportamento padrão do formulário
+
+            // Captura os valores do formulário
+            const nome = document.getElementById("nome").value;
+            const numero = document.getElementById("numero").value;
+            const email = document.getElementById("email").value;
+
+            // Adiciona o novo contato ao array
+            contatos.push(adicionarContato(nome, numero, email));
+
+            // Exibe os contatos na lista
+            exibirContatos(contatos);
+
+            // Limpa o formulário
+            limparFormulario();
+        });
+
+        // Função para editar um contato
+        function editarContato(index) {
+            const novoNome = prompt("Digite o novo nome:");
+            const novoNumero = prompt("Digite o novo número:");
+            const novoEmail = prompt("Digite o novo email:");
+
+            if (novoNome && novoNumero && novoEmail) {
+                contatos[index].nome = novoNome;
+                contatos[index].numero = novoNumero;
+                contatos[index].email = novoEmail;
+
+                // Exibe os contatos atualizados na lista
+                exibirContatos(contatos);
+            } else {
+                alert("Por favor, preencha todos os campos.");
+            }
+        }
+
+        // Função para excluir um contato
+        function excluirContato(index) {
+            if (confirm("Tem certeza que deseja excluir este contato?")) {
+                contatos.splice(index, 1);
+                exibirContatos(contatos);
+            }
+        }
+    </script>
 </body>
 </html>
